@@ -1,0 +1,79 @@
+:root {
+  --autumn-yellow: #f5c518;
+  --autumn-brown: #8b5e3c;
+  --autumn-green: #3a6b35;
+  --autumn-red: #b22222;
+  --fjord-blue: #1e3f66;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-repeat: no-repeat;
+  /*background: linear-gradient(to bottom, var(--autumn-yellow), var(--fjord-blue));*/
+  color: #fff;
+}
+
+header {
+  /*background-color: var(--autumn-red);*/
+  padding: 1rem;
+  text-align: center;
+}
+
+.search-section {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem;
+}
+
+#fileSelect, #searchBox {
+  padding: 0.5rem;
+  border: 2px solid var(--autumn-green);
+  border-radius: 5px;
+}
+
+#searchBtn {
+  padding: 0.5rem 1rem;
+  background-color: var(--autumn-green);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#searchBtn:hover {
+  background-color: var(--autumn-brown);
+}
+
+#results {
+  margin: 2rem;
+  padding: 1rem;
+  background-color: rgba(30, 63, 102, 0.7);
+  border-radius: 8px;
+}
+
+.file-results {
+  margin-bottom: 1.5rem;
+}
+
+.file-results h2 {
+  color: var(--autumn-yellow);
+}
+
+.file-results p {
+  background-color: var(--autumn-brown);
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin: 0.3rem 0;
+}
+
+
+.#strompris-container {
+  width: 60%;              /* Bredden settes til 60% */
+  background-color: black; /* Svart bakgrunn */
+  color: white;            /* Hvit tekst så den synes */
+  padding: 10px;           /* Litt luft rundt teksten */
+  border-radius: 5px;      /* Myke hjørner (valgfritt) */
+  margin: 20px auto;       /* Sentrer boksen på siden */
+}
