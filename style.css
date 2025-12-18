@@ -11,7 +11,7 @@ body {
   margin: 0;
   background-repeat: no-repeat;
   /*background: linear-gradient(to bottom, var(--autumn-yellow), var(--fjord-blue));*/
-  color: #fff;
+  color: red;
 }
 
 header {
