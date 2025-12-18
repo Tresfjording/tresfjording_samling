@@ -23,7 +23,7 @@
       <input type="text" id="searchBox" placeholder="Søk etter tekster og facts ...">
       <button id="searchBtn">Søk</button>
     </section>
-
+    <div id="strompris" style="font-size: 1.2em; color: #0077cc;"></div>
     <section id="results"></section>
 
   </main>
@@ -151,13 +151,29 @@ if (query === "øyvind" || query === "øivind") {
   });
 </script>
 
-
-
-
-
-
-
 </script>
+
+ <div id="strompris">Laster strømpris…</div>
+
+  <script>
+    async function visStrompris() {
+      try {
+        const res = await fetch('https://www.tresfjording.no/strompris.php');
+        const data = await res.json();
+        document.getElementById('strompris').innerHTML =
+          data.pris
+            ? `⚡ Strømpris NO3 nå: <b>${data.pris}</b> kr/kWh`
+            : 'Pris ikke tilgjengelig';
+      } catch (err) {
+        document.getElementById('strompris').textContent = 'Feil ved henting';
+        console.error(err);
+      }
+    }
+    visStrompris();
+  </script>
+
+
+
 
   <!-- HTML-innhold -->
   <script src="/script.js"></script>
