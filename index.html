@@ -21,16 +21,37 @@
     #forslag div.highlight {
       background: #eaf2f8;
     }
+    table {
+      border-collapse: collapse;
+      margin-top: 20px;
+      width: 100%;
+      max-width: 600px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: center;
+    }
+    th {
+      background: #f2f2f2;
+    }
+    .cheap {
+      background: #d4efdf;
+    }
+    .expensive {
+      background: #f5b7b1;
+    }
   </style>
 </head>
 <body>
-  <h1>⚡ Strømpris Ekss MVA akkurat nå</h1>
+  <h1>⚡ Strømpris nå</h1>
 
   <label for="kommuneInput">Skriv kommune:</label>
   <input type="text" id="kommuneInput" autocomplete="off">
   <div id="forslag"></div>
 
   <div id="pris">Ingen kommune valgt.</div>
+  <div id="tabell"></div>
 
   <script>
     let kommuner = {};
@@ -109,6 +130,7 @@
         const res = await fetch(url);
         const data = await res.json();
 
+        // Spotpris nå
         const entry = data.find(e => {
           const start = new Date(e.time_start);
           return start.getHours() === idag.getHours();
@@ -123,6 +145,27 @@
           document.getElementById("pris").textContent =
             "Fant ikke pris for gjeldende time.";
         }
+
+        // Hele dagens tabell
+        const priser = data.map(e => ({
+          tid: new Date(e.time_start).getHours(),
+          pris: e.NOK_per_kWh * 100
+        }));
+
+        const minPris = Math.min(...priser.map(p => p.pris));
+        const maxPris = Math.max(...priser.map(p => p.pris));
+
+        let html = "<table><tr><th>Time</th><th>Pris (øre/kWh)</th></tr>";
+        priser.forEach(p => {
+          let cls = "";
+          if (p.pris === minPris) cls = "cheap";
+          if (p.pris === maxPris) cls = "expensive";
+          html += `<tr class="${cls}"><td>${p.tid}:00</td><td>${p.pris.toFixed(2)}</td></tr>`;
+        });
+        html += "</table>";
+
+        document.getElementById("tabell").innerHTML = html;
+
       } catch (err) {
         document.getElementById("pris").textContent =
           "Kunne ikke hente data.";
