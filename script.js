@@ -5,9 +5,11 @@ async function hentStederdata() {
     return await response.json();
   } catch (error) {
     console.error('Feil ved henting av stederdata:', error);
-    return [];
+    return null;
   }
 }
+
+
 
 function fyllDatalist(data) {
   const datalist = document.getElementById('kommuner');
