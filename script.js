@@ -1,5 +1,5 @@
 
-fetch('/404.html')
+fetch('/public/404.html')
   .then(r => r.text())
   .then(html => {
       document.getElementById('errorContainer').innerHTML = html;
