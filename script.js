@@ -1,3 +1,6 @@
+
+window.location.href = "/404.html";
+
 async function hentStederdata() {
   try {
     const response = await fetch('/steder.json');
