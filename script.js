@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const kommune = document.getElementById('kommuneInput').value.trim();
     oppdaterInfo(kommune, data);
 document.getElementById('fylkeDisplay').textContent = entry["fylke"] ?? 'Ukjent';
-document.getElementById('folketallDisplay').textContent = entry["folketall"]?.toLocaleString();';
+document.getElementById('folketallDisplay').textContent = entry["folketall"]?.toLocaleString();
   });
 });
 function visFeilmelding(msg) {
