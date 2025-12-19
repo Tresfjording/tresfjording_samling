@@ -47,7 +47,7 @@ async function oppdaterInfo(kommuneNavn, data) {
     return;
   }
 
-  const entry = data.find(x => x["Kommunenavn"]?.toLowerCase() === kommuneNavn.toLowerCase());
+  const entry = data.find(x => x["kommunenavn"]?.toLowerCase() === kommuneNavn.toLowerCase());
   if (!entry) {
     visFeilmelding("Fant ikke kommunen i stededata.");
     return;
