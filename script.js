@@ -131,3 +131,16 @@ async function hentSE3() {
 
 hentSE3();
 console.log("Knapp trykket!");
+
+async function visRandomFakta() {
+  try {
+    const res = await fetch('/facts.json');
+    if (!res.ok) throw new Error("Kunne ikke hente facts.json");
+    const fakta = await res.json();
+
+    const tilfeldig = fakta[Math.floor(Math.random() * fakta.length)];
+    document.getElementById('faktaDisplay').textContent = tilfeldig;
+  } catch (e) {
+    console.error("Feil ved henting av fakta:", e);
+  }
+}
