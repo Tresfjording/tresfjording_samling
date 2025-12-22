@@ -159,10 +159,7 @@ async function hentDK2() {
     const data = await res.json();
 
     const eurMWh = data.records[0].SpotPriceEUR;
-
-    // Omregning: EUR/MWh → NOK/kWh → øre/kWh
     const nokPerKWh = eurMWh * 11.5 / 1000 * 100;
-
     const avrundet = Math.round(nokPerKWh);
 
     document.getElementById("dk2-price").innerHTML =
