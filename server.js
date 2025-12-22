@@ -1,3 +1,4 @@
+// JavaScript source code
 const express = require("express");
 const fetch = require("node-fetch");
 const { JSDOM } = require("jsdom");
@@ -14,13 +15,10 @@ app.get("/api/se3-now", async (req, res) => {
     const dom = new JSDOM(html);
     const doc = dom.window.document;
 
-    // Ny struktur: pris nå ligger i en <div> med data-price-now eller lignende
-    const nowElement = doc.querySelector('[data-price-now]') || doc.querySelector('.spot-price-now .value');
-    const now = nowElement?.textContent.trim();
+    const now = doc.querySelector(".price-now .value")?.textContent.trim();
 
     res.json({ now: now || null });
   } catch (error) {
-    console.error("Feil ved henting:", error);
     res.status(500).json({ error: "Kunne ikke hente SE3-prisen" });
   }
 });

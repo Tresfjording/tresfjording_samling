@@ -1,6 +1,3 @@
-
-//window.location.href = "/404.html";
-
 async function hentStederdata() {
   try {
     const response = await fetch('/steder.json');
@@ -12,14 +9,12 @@ async function hentStederdata() {
   }
 }
 
-
-
 function fyllDatalist(data) {
   const datalist = document.getElementById('kommune');
   datalist.innerHTML = '';
   data.forEach(entry => {
     const option = document.createElement('option');
-    option.value = entry["kommunenavn"];
+    option.value = entry.kommunenavn;
     datalist.appendChild(option);
   });
 }
@@ -44,29 +39,32 @@ async function hentSpotpris(sone) {
     return null;
   }
 }
+
 async function oppdaterInfo(kommuneNavn, data) {
   if (!data || data.length === 0) {
     visFeilmelding("Ingen stededata tilgjengelig.");
     return;
   }
 
-  const entry = data.find(x => x["kommunenavn"]?.toLowerCase() === kommuneNavn.toLowerCase());
+  const entry = data.find(x => x.kommunenavn?.toLowerCase() === kommuneNavn.toLowerCase());
   if (!entry) {
     visFeilmelding("Fant ikke kommunen i stededata.");
     return;
   }
+
   document.getElementById('statusDisplay').textContent =
     `✅ Fant data for ${entry.kommunenavn}`;
 
-  document.getElementById('fylkeDisplay').textContent = entry["fylke"] ?? 'Ukjent';
-  document.getElementById('folketallDisplay').textContent = entry["folketall"]?.toLocaleString('no-NO') ?? '�';
+  document.getElementById('fylkeDisplay').textContent = entry.fylke ?? 'Ukjent';
+  document.getElementById('folketallDisplay').textContent = entry.folketall?.toLocaleString('no-NO') ?? ' ';
   document.getElementById('soneDisplay').textContent = entry.sone ?? 'Ukjent';
   document.getElementById('slagordDisplay').textContent = entry.slagord || 'Ingen slagord registrert';
- 
 
   const pris = await hentSpotpris(entry.sone);
-  document.getElementById('prisDisplay').textContent = pris ? `${pris} �re/kWh ekskl. MVA` : 'Ingen pris tilgjengelig';
+  document.getElementById('prisDisplay').textContent =
+    pris ? `${pris} øre/kWh ekskl. MVA` : 'Ingen pris tilgjengelig';
 }
+
 document.addEventListener('DOMContentLoaded', async () => {
   const data = await hentStederdata();
   fyllDatalist(data);
@@ -74,19 +72,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('visInfoBtn').addEventListener('click', () => {
     const kommune = document.getElementById('kommuneInput').value.trim();
     oppdaterInfo(kommune, data);
-document.getElementById('fylkeDisplay').textContent = entry["fylke"] ?? 'Ukjent';
-document.getElementById('folketallDisplay').textContent = entry["folketall"]?.toLocaleString();
   });
 });
+
 function visFeilmelding(msg) {
-  document.getElementById('fylkeDisplay').textContent = '�';
-  document.getElementById('folketallDisplay').textContent = '�';
-  document.getElementById('soneDisplay').textContent = '�';
+  document.getElementById('fylkeDisplay').textContent = ' ';
+  document.getElementById('folketallDisplay').textContent = ' ';
+  document.getElementById('soneDisplay').textContent = ' ';
   document.getElementById('slagordDisplay').textContent = msg;
-  document.getElementById('prisDisplay').textContent = '�';
+  document.getElementById('prisDisplay').textContent = ' ';
 }
 
-// /api/se3-now.js
+// SE3
 async function hentSE3() {
   try {
     const url = "https://api.energidataservice.dk/dataset/Elspotprices?filter=%7B%22PriceArea%22%3A%20%22SE3%22%7D&limit=1&sort=HourUTC%20desc";
@@ -94,9 +91,8 @@ async function hentSE3() {
     const res = await fetch(url);
     const data = await res.json();
 
-    // Pris kommer i EUR/MWh → vi gjør om til øre/kWh
     const eurMWh = data.records[0].SpotPriceEUR;
-    const nokPerKWh = eurMWh * 11.5 / 1000 * 100; // 11.5 = ca. NOK/EUR
+    const nokPerKWh = eurMWh * 11.5 / 1000 * 100;
 
     const avrundet = Math.round(nokPerKWh);
 
