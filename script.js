@@ -5,27 +5,22 @@ async function hentStederdata() {
   try {
     const response = await fetch('/tettsteder.json');
     if (!response.ok) throw new Error('Kunne ikke hente JSON');
-    steder = await response.json(); // lagre globalt
-    fyllDatalist(steder);           // kall videre funksjon
+    steder = await response.json();
+    fyllDatalist(steder);
   } catch (error) {
     console.error('Feil ved henting av stededata:', error);
   }
 }
 
+function fyllDatalist(data) {
+  const liste = document.getElementById('stedListe');
+  if (!liste || !Array.isArray(data)) return;
 
-function fyllDatalist(steder) {
-  if (!Array.isArray(steder)) {
-    console.warn('Ingen steder å fylle inn');
-    return;
-  }
-
-  const datalist = document.getElementById('stedListe');
-  datalist.innerHTML = ''; // rydd opp først
-
-  steder.forEach(entry => {
+  liste.innerHTML = '';
+  data.forEach(entry => {
     const option = document.createElement('option');
     option.value = entry.tettsted;
-    datalist.appendChild(option);
+    liste.appendChild(option);
   });
 }
 
@@ -34,12 +29,38 @@ function visTettsted() {
   const entry = steder.find(e => e.tettsted.toLowerCase() === søk);
 
   if (!entry) {
-    document.getElementById('statusDisplay').textContent = '⚠ Fant ikke kommunenavn';
+    visFeilmelding('⚠ Fant ikke kommunenavn');
     return;
   }
 
-  // vis data her...
+  oppdaterInfo(entry);
 }
+
+function visFeilmelding(msg) {
+  const el = document.getElementById('statusDisplay');
+  if (el) el.textContent = msg;
+}
+
+function oppdaterInfo(entry) {
+  document.getElementById('statusDisplay').textContent = `☑ Fant data for ${entry.tettsted}`;
+  document.getElementById('k_nrDisplay').textContent = entry.k_nr ?? 'Ukjent';
+  document.getElementById('tettstedDisplay').textContent = entry.tettsted ?? 'Ukjent';
+  document.getElementById('fylkeDisplay').textContent = entry.fylke ?? 'Ukjent';
+  document.getElementById('soneDisplay').textContent = entry.sone ?? 'Ukjent';
+  document.getElementById('antallDisplay').textContent = entry.antall ?? 'Ukjent';
+  document.getElementById('arealDisplay').textContent = entry.areal ?? 'Ukjent';
+  document.getElementById('sysselsatteDisplay').textContent = entry.sysselsatte ?? 'Ukjent';
+  document.getElementById('tilskuddDisplay').textContent = entry.tilskudd ?? 'Ukjent';
+  document.getElementById('språkDisplay').textContent = entry.språk ?? 'Ukjent';
+  document.getElementById('k_slagordDisplay').textContent = entry.k_slagord || 'Ingen slagord registrert';
+  document.getElementById('f_slagordDisplay').textContent = entry.f_slagord || 'Ingen slagord registrert';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  hentStederdata();
+
+  document.getElementById('søkInput').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') visTettsted();
   });
 
   document.getElementById('visButton').addEventListener('click', visTettsted);
@@ -66,11 +87,11 @@ async function hentSpotpris(sone) {
   }
 }
 
-async function oppdaterInfo(kommuneNavn, data) {
-  if (!data || data.length === 0) {
-    visFeilmelding("Ingen stededata tilgjengelig.");
-    return;
-  }
+function oppdaterInfo(entry) {
+  document.getElementById('statusDisplay').textContent =
+    `☑ Fant data for ${entry.tettsted}`;
+  // osv...
+}
 
   const entry = data.find(x => x.kommunenavn?.toLowerCase() === kommuneNavn.toLowerCase());
   if (!entry) {
