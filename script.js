@@ -88,13 +88,13 @@ async function hentSpotpris(sone) {
     console.error("Feil ved henting av spotpris:", error);
     return null;
   }
-}
+
 
 //function oppdaterInfo(entry) {
 //  document.getElementById('statusDisplay').textContent =
 //    `☑ Fant data for ${entry.tettsted}`;
   // osv...
-}
+
 
   const entry = data.find(x => x.kommunenavn?.toLowerCase() === kommuneNavn.toLowerCase());
   if (!entry) {
