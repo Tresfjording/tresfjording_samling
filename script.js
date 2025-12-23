@@ -30,7 +30,7 @@ function visTettsted() {
 
   if (!entry) {
     visFeilmelding('⚠ Fant ikke kommunenavn');
-    return;
+    return; // ✅ dette er lov her
   }
 
   oppdaterInfo(entry);
