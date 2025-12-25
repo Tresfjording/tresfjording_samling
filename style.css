@@ -9,7 +9,7 @@ body {
   color: #333;
   margin: 0;
   padding: 1rem;
-  display: flex;
+/*  display: flex;*/
   justify-content: center;
   align-items: flex-start; /* eller center hvis du vil midt på siden */
   min-height: 100vh;
