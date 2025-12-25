@@ -148,9 +148,13 @@ async function visRandomFakta() {
   await hentStederdata();
   hentSE3();
   hentDK2();
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
+  initApp();
+});
+
+async function initApp() {
   try {
-    await hentStederdata(); // må være inne i async-funksjon
+    await hentStederdata(); // ✅ nå er await inne i async-funksjon
     hentSE3();
     hentDK2();
 
@@ -159,12 +163,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     document.getElementById('visButton').addEventListener('click', visTettsted);
-    
-    console.log("Init fullført");
+
+    console.log("✅ Init fullført");
   } catch (error) {
-    console.error("Feil under init:", error);
+    console.error("🚨 Feil under init:", error);
   }
-});
+}
+
+
 console.log("URL som brukes:", url);
 async function hentSpotpris(sone) {
     const url = `https://www.forbrukerradet.no/strompris/api/spotpris?omrade=${sone}`;
