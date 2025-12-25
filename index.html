@@ -1,57 +1,135 @@
 ﻿<!DOCTYPE html>
-<html lang="no">
-  <head>
+<html lang="nb">
+<head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Strømprisen akkurat nå</title>
-
-  <link rel="stylesheet" href="/style.css">
-  <script src="/script.js" defer></script>
-  <link rel="icon" href="/favicon.ico">
+  <title>selsomt.no – tettsteder og strømpris</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f7fb;
+      margin: 0;
+      padding: 2rem;
+      color: #222;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.5rem 1.75rem 2rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 1.4rem;
+      letter-spacing: 0.03em;
+    }
+    .search-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccd2e0;
+    }
+    button {
+      padding: 0.5rem 0.9rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: #2563eb;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+    dl {
+      margin: 0;
+    }
+    dt {
+      font-weight: 600;
+      margin-top: 0.4rem;
+      font-size: 0.9rem;
+    }
+    dd {
+      margin: 0;
+      font-size: 0.95rem;
+    }
+    .status {
+      margin-top: 0.75rem;
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    .status-ok {
+      background: #ecfdf3;
+      color: #166534;
+    }
+    .status-error {
+      background: #fef2f2;
+      color: #b91c1c;
+    }
+    .debug {
+      margin-top: 1.75rem;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 1rem;
+      font-size: 0.85rem;
+      color: #4b5563;
+    }
+    .debug button {
+      background: #6b7280;
+      font-size: 0.8rem;
+      padding: 0.25rem 0.6rem;
+    }
+  </style>
 </head>
-
 <body>
-  <div id="mainWrapper">
+  <div class="container">
+    <h1>selsomt.no – tettsted og strømpris</h1>
 
-  <h1>Strømprisen akkurat nå</h1>
-<h6>"Tall fra Grønt Hefte 2025</h6>
+    <div class="search-row">
+      <input id="sokInput" type="text" placeholder="Skriv tettsted, f.eks. Molde">
+      <button id="visInfoBtn">Vis info</button>
+    </div>
 
-  <!-- Søkefelt og knapp -->
-  <input id="søkInput" list="tettstedListe" placeholder="Navn på Tettsted">
-  <datalist id="tettstedListe"></datalist>
-  <p><button id="visButton">Vis info</button></p>
+    <div id="status" class="status"></div>
 
-  <!-- Resultatfelt -->
-   
-  <div id="resultatBoks">
-  <strong>Tettsted:</strong> <span id="valgttettstedDisplay"></span></p>
-  <p><strong>Pris:</strong> <span id="prisDisplay"></span></p>   
-  <p><strong>Status:</strong> <span id="statusDisplay"></span></p>
-  <p><strong>Kommune nr.:</strong> <span id="k_nrDisplay"></span></p>
-  <p><strong>Tettsted:</strong> <span id="tettstedDisplay"></span></p>
-  <p><strong>Fylke:</strong> <span id="fylkeDisplay"></span></p>
-  <p><strong>Sone:</strong> <span id="soneDisplay"></span></p>
-  <p><strong>Antall:</strong> <span id="antallDisplay"></span></p>
-  <p><strong>Areal:</strong> <span id="arealDisplay"></span></p>
-  <p><strong>Sysselsatte:</strong> <span id="sysselsatteDisplay"></span></p>
-  <p><strong>Tilskudd:</strong> <span id="tilskuddDisplay"></span></p>
-  <p><strong>Språk:</strong> <span id="språkDisplay"></span></p>
-  <p><strong>Kommuneslagord:</strong> <span id="k_slagordDisplay"></span></p>
-  <p><strong>Fylkesslagord:</strong> <span id="f_slagordDisplay"></span></p>
+    <dl>
+      <dt>Tettsted:</dt>
+      <dd id="tettstedDisplay">–</dd>
+
+      <dt>Pris:</dt>
+      <dd id="prisDisplay">–</dd>
+
+      <dt>Kommune nr.:</dt>
+      <dd id="kNrDisplay">–</dd>
+
+      <dt>Fylke:</dt>
+      <dd id="fylkeDisplay">–</dd>
+
+      <dt>Sone:</dt>
+      <dd id="soneDisplay">–</dd>
+
+      <dt>Antall:</dt>
+      <dd id="antallDisplay">–</dd>
+    </dl>
+
+    <div class="debug">
+      Debug:
+      <button id="btnValider">Valider soner</button>
+      <button id="btnAntall">Antall per sone</button>
+      <button id="btnTestPris">Test alle soner</button>
+    </div>
   </div>
 
-  <!-- Spotpriser for Norden -->
-  <p id="se3-price" class="prislinje"></p>
-  <p id="dk2-price" class="prislinje"></p>
-
-  <hr>
-
-  <!-- Fakta-boks -->
-  <p id="faktaDisplay"
-     style="font-style: italic; color: #888; text-align: center; margin-top: 2rem;">
-     💡 Fakta: ...
-  </p>
-  </div>
+  <script src="script.js"></script>
 </body>
 </html>
