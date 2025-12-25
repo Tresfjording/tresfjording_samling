@@ -11,7 +11,7 @@ async function hentStederdata() {
     fyllDatalist(steder);
   } catch (error) {
     console.error('Feil ved henting av stederdata:', error);
-  }
+  window.steder = data; // gjør 'steder' tilgjengelig i konsollen}
 }
 
 // -----------------------------
