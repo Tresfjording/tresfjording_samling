@@ -59,9 +59,9 @@ function visFeilmelding(msg) {
 // -----------------------------
 // OPPDATER INFOFELTENE
 // -----------------------------
-f//unction oppdaterInfo(entry) {
-  //document.getElementById('statusDisplay').textContent =
-    //`☑ Fant data for ${entry.tettsted}`;
+function oppdaterInfo(entry) {
+ document.getElementById('statusDisplay').textContent =
+ `☑ Fant data for ${entry.tettsted}`;
 
  // document.getElementById("valgtKommuneDisplay").textContent = entry.kommune;
   document.getElementById('k_nrDisplay').textContent = entry.k_nr ?? 'Ukjent';
