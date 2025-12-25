@@ -46,7 +46,7 @@ async function visTettsted() {
   // hent spotpris
   const pris = await hentSpotpris(entry.sone);
   document.getElementById('prisDisplay').textContent =
-    pris ? `${pris} øre/kWh ekskl. MVA` : 'Ingen pris tilgjengelig';
+    pris ? `${(pris * 100).toFixed(2)} øre/kWh inkl. MVA` : 'Ingen pris tilgjengelig';
 }
 
 // -----------------------------
@@ -100,7 +100,7 @@ function oppdaterInfo(entry) {
 //    console.error("Feil ved henting av spotpris:", error);
 //    return null;
 //  }
-//}
+
 
 // -----------------------------
 // HENT SE3
@@ -174,6 +174,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.getElementById('visButton').addEventListener('click', visTettsted);
 });
+
 async function hentSpotpris(sone) {
     const url = `https://www.forbrukerradet.no/strompris/api/spotpris?omrade=${sone}`;
     const response = await fetch(url);
