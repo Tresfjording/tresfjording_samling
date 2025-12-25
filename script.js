@@ -18,7 +18,7 @@ async function hentStederdata() {
 // FYLL DATALIST
 // -----------------------------
 function fyllDatalist(data) {
-  const liste = document.getElementById('stedListe');
+  const liste = document.getElementById('tettstedListe');
   if (!liste || !Array.isArray(data)) return;
 
   liste.innerHTML = '';
