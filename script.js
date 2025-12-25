@@ -47,10 +47,32 @@ console.log("✅ visTettsted() ble kalt");
   oppdaterInfo(entry);
 
   // hent spotpris
+async function hentSpotpris(sone) {
+  // Midlertidig: bruk DK2 uansett sone
+  const url = `https://api.energidataservice.dk/dataset/Elspotprices?filter={"PriceArea":"DK2"}&limit=1&sort=HourUTC desc`;
+  console.log("Henter spotpris fra DK2:", url);
 
-  const pris = await hentSpotpris(entry.sone);
-  document.getElementById('prisDisplay').textContent =
-    pris ? `${(pris * 100).toFixed(2)} øre/kWh inkl. MVA` : 'Ingen pris tilgjengelig';
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (!data.records || data.records.length === 0) {
+      console.warn("⚠ Ingen spotpris-data mottatt fra DK2");
+      return null;
+    }
+
+    const eurMWh = data.records[0].SpotPriceEUR;
+
+    // Omregning: EUR/MWh → NOK/kWh
+    const nokPerKWh = eurMWh * 11.5 / 1000;
+
+    console.log("DK2-pris (NOK/kWh):", nokPerKWh);
+    return nokPerKWh;
+
+  } catch (error) {
+    console.error("🚨 Feil ved henting av DK2-spotpris:", error);
+    return null;
+  }
 }
 
 // -----------------------------
