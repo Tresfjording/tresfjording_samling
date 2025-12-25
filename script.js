@@ -35,10 +35,10 @@ function fyllDatalist(data) {
 
 async function visTettsted() {
   const søk = document.getElementById('søkInput').value.trim().toLowerCase();
-  const entry = steder.find(e => e.tettsted.toLowerCase() === søk);
+  const entry = steder.find(e =>e.tettsted.toLowerCase().startsWith(søk));
 console.log("✅ visTettsted() ble kalt");
   if (!entry) {
-    visFeilmelding('⚠ Fant ikke kommunenavn');
+    visFeilmelding('⚠ Fant ikke tettsted');
     return;
   }
 
@@ -67,7 +67,7 @@ function oppdaterInfo(entry) {
  document.getElementById('statusDisplay').textContent =
  `☑ Fant data for ${entry.tettsted}`;
 
-  document.getElementById("valgtKommuneDisplay").textContent = entry.tettsted ?? 'Ukjent';
+  document.getElementById("valgttettstedDisplay").textContent = entry.tettsted ?? 'Ukjent';
   document.getElementById('k_nrDisplay').textContent = entry.k_nr ?? 'Ukjent';
   document.getElementById('tettstedDisplay').textContent = entry.tettsted ?? 'Ukjent';
   document.getElementById('fylkeDisplay').textContent = entry.fylke ?? 'Ukjent';
@@ -78,7 +78,7 @@ function oppdaterInfo(entry) {
   document.getElementById('tilskuddDisplay').textContent = entry.tilskudd ?? 'Ukjent';
   document.getElementById('språkDisplay').textContent = entry.språk ?? 'Ukjent';
   document.getElementById('k_slagordDisplay').textContent = entry.k_slagord ?? 'Ingen slagord registrert';
-  document.getElementById('f_slagordDisplay').textContent = entry.f_slagord ?? 'Ingen slagord regitrert';
+  document.getElementById('f_slagordDisplay').textContent = entry.f_slagord ?? 'Ingen slagord registrert';
   
 }
 
@@ -163,17 +163,18 @@ async function initApp() {
     console.error("🚨 Feil under init:", error);
   }
 }
-
+visRandomFakta();
 
 
 async function hentSpotpris(sone) {
-console.log("URL som brukes:", url);
   const url = `https://www.forbrukerradet.no/strompris/api/spotpris?omrade=${sone}`;
+  console.log("URL som brukes:", url);
     const response = await fetch(url);
     const data = await response.json();
     // Forbrukerrådet returnerer en liste, vi tar første element
-    const pris = data[0]?.pris;
+    if (!Array.isArray(data) || data.length === 0) return null;
 
     return pris; // Pris inkl. MVA
 };
 
+document.addEventListener("DOMContentLoaded", initApp);
