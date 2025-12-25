@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     document.getElementById('visButton').addEventListener('click', visTettsted);
-
+    
     console.log("Init fullført");
   } catch (error) {
     console.error("Feil under init:", error);
