@@ -44,10 +44,10 @@ async function visTettsted() {
   oppdaterInfo(entry);
 
   // hent spotpris
-  const pris = await hentSpotpris(entry.sone);
-  document.getElementById('prisDisplay').textContent =
-    pris ? `${pris} øre/kWh ekskl. MVA` : 'Ingen pris tilgjengelig';
-}
+//  const pris = await hentSpotpris(entry.sone);
+//  document.getElementById('prisDisplay').textContent =
+//    pris ? `${pris} øre/kWh ekskl. MVA` : 'Ingen pris tilgjengelig';
+//}
 
 // -----------------------------
 // VIS FEILMELDING
@@ -64,7 +64,7 @@ function oppdaterInfo(entry) {
  `☑ Fant data for ${entry.tettsted}`;
 
 //  document.getElementById("valgtKommuneDisplay").textContent = entry.kommune ?? 'Ukjent';
-//  document.getElementById('prisDisplay').textContent = entry.prisDisplay ?? 'Ukjent';
+  document.getElementById('prisDisplay').textContent = prisDisplay ?? 'Ukjent';
   document.getElementById('k_nrDisplay').textContent = entry.k_nr ?? 'Ukjent';
   document.getElementById('tettstedDisplay').textContent = entry.tettsted ?? 'Ukjent';
   document.getElementById('fylkeDisplay').textContent = entry.fylke ?? 'Ukjent';
@@ -82,26 +82,26 @@ function oppdaterInfo(entry) {
 // -----------------------------
 // HENT SPOTPRIS
 // -----------------------------
-async function hentSpotpris(sone) {
-  const dato = new Date();
-  const year = dato.getFullYear();
-  const month = String(dato.getMonth() + 1).padStart(2, '0');
-  const day = String(dato.getDate()).padStart(2, '0');
+//async function hentSpotpris(sone) {
+//  const dato = new Date();
+//  const year = dato.getFullYear();
+//  const month = String(dato.getMonth() + 1).padStart(2, '0');
+//  const day = String(dato.getDate()).padStart(2, '0');
 
-  const url = `https://www.hvakosterstrommen.no/api/v1/prices/${year}/${month}-${day}_${sone}.json`;
+//  const url = `https://www.hvakosterstrommen.no/api/v1/prices/${year}/${month}-${day}_${sone}.json`;
 
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Kunne ikke hente spotpris");
-    const data = await response.json();
-    const priser = data.map(p => p.NOK_per_kWh);
-    const gjennomsnitt = (priser.reduce((a, b) => a + b, 0) / priser.length) * 100;
-    return gjennomsnitt.toFixed(2);
-  } catch (error) {
-    console.error("Feil ved henting av spotpris:", error);
-    return null;
-  }
-}
+//  try {
+//    const response = await fetch(url);
+//    if (!response.ok) throw new Error("Kunne ikke hente spotpris");
+//    const data = await response.json();
+//    const priser = data.map(p => p.NOK_per_kWh);
+//    const gjennomsnitt = (priser.reduce((a, b) => a + b, 0) / priser.length) * 100;
+//    return gjennomsnitt.toFixed(2);
+//  } catch (error) {
+//    console.error("Feil ved henting av spotpris:", error);
+//    return null;
+//  }
+//}
 
 // -----------------------------
 // HENT SE3
