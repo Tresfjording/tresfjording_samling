@@ -154,7 +154,6 @@ function oppdaterFelter(entry, pris) {
       : `${(pris * 100).toFixed(2)} øre/kWh (inkl. MVA, ca.)`
   );
 }
-
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Init startet");
 
