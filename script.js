@@ -128,7 +128,7 @@ function visPåKart(map, entry) {
     .openPopup();
 
   // Zoom inn
-  map.setView([entry.lat_decimal, entry.lon_decimal], 12);
+  map.setView([entry.lat_decimal, entry.lon_decimal], 120);
 }
 
 
