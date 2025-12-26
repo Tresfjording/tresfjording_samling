@@ -46,46 +46,6 @@ function normaliserTettstedNavn(str) {
   return str.trim().toLowerCase();
 }
 
-// === HOVEDFUNKSJON – vis info om tettsted ===
-async function visTettsted() {
-  console.log("✅ visTettsted() ble kalt");
-  const input = document.getElementById('sokInput').value;
-  const søk = normaliserTettstedNavn(input);
-
-  if (!søk) {
-    settStatus("Skriv inn et tettsted først.", false);
-    return;
-  }
-
-  if (!steder || steder.length === 0) {
-    settStatus("Tettstedsdata ikke lastet ennå.", false);
-    return;
-  }
-
-  const entry = steder.find(e => normaliserTettstedNavn(e.tettsted) === søk);
-
-  if (!entry) {
-    settStatus(`Fant ikke tettstedet "${input}".`, false);
-    oppdaterFelter(null, null);
-    return;
-  }
-
-  console.log("✅ Fant entry:", entry);
-
-  // hent spotpris basert på sone
-  const sone = entry.sone;
-  console.log("Sone som sendes til API:", sone);
-
-  const pris = await hentSpotpris(sone);
-
-  if (pris == null) {
-    settStatus(`Fant data for ${entry.tettsted}, men ingen strømpris for sone ${sone}.`, false);
-  } else {
-    settStatus(`Fant data for ${entry.tettsted} (sone ${sone}).`, true);
-  }
-
-  oppdaterFelter(entry, pris);
-}
 
 
 
