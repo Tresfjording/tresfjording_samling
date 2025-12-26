@@ -186,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             // Funksjon: vis kun ett tettsted
-          function visSoktTettsted() {
+function visSoktTettsted() {
     const query = document.getElementById("sokInput").value.trim().toLowerCase();
 
     const entry = data.find(item =>
@@ -215,9 +215,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     map.setView([entry.lat_decimal, entry.lon_decimal], 12);
 }
-                // Zoom inn
-                map.setView([entry.lat_decimal, entry.lon_decimal], 12);
-            };
 
             // Koble Enter-tasten til søk
             document.getElementById("searchInput").addEventListener("keyup", function (e) {
