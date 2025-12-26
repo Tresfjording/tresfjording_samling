@@ -29,17 +29,17 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("Lastet tettsteder_3.json –", steder.length, "poster");
 
       // Vis alle tettsteder ved oppstart
-      steder.forEach(item => {
-      if (item.lat_decimal && item.lon_decimal) {
-          L.marker([item.lat_decimal, item.lon_decimal])
-            .addTo(map)
-            .bindPopup(`
-              <strong>${item.tettsted}</strong><br>
-              ${item.fylke}<br>
-             ${item.k_slagord || ""}
-            `);
-        }
-      });
+    //  steder.forEach(item => {
+    //  if (item.lat_decimal && item.lon_decimal) {
+    //      L.marker([item.lat_decimal, item.lon_decimal])
+   //         .addTo(map)
+  //          .bindPopup(`
+  //            <strong>${item.tettsted}</strong><br>
+  //            ${item.fylke}<br>
+  //           ${item.k_slagord || ""}
+  //          `);
+  //      }
+  //    });
 
       // Koble søk
       visInfoBtn.addEventListener("click", () => visTettsted(map));
