@@ -114,36 +114,51 @@ function oppdaterFelter(entry, pris) {
   }
 }
 
-// === HENT SPOTPRIS FRA ENERGI-DATASERVICE ===
-async function hentSpotpris(sone) {
-  const url =
-    `https://api.energidataservice.dk/dataset/Elspotprices` +
-    `?filter={"PriceArea":"${sone}"}` +
-    `&limit=1&sort=HourUTC desc`;
 
-  console.log("Henter norsk spotpris:", url);
+// === HENT SPOTPRIS FRA hvakosterstrommen.no ===
+async function hentSpotpris(sone) {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+
+  const url = `https://www.hvakosterstrommen.no/api/v1/prices/${year}/${month}-${day}_${sone}.json`;
+
+  console.log("Henter norsk spotpris fra hvakosterstrommen.no:", url);
 
   try {
     const response = await fetch(url);
+    if (!response.ok) {
+      console.warn("⚠ API svarte ikke OK:", response.status);
+      return null;
+    }
+
     const data = await response.json();
-
-    if (!data.records || data.records.length === 0) {
-      console.warn("⚠ Ingen data for norsk prisområde:", sone);
+    if (!Array.isArray(data) || data.length === 0) {
+      console.warn("⚠ Ingen prisdata i JSON for sone:", sone);
       return null;
     }
 
-    const eurMWh = data.records[0].SpotPriceEUR;
-    if (eurMWh == null) {
-      console.warn("⚠ SpotPriceEUR mangler i responsen for sone:", sone);
+    // Finn gjeldende time
+    const currentHour = now.getHours();
+    const entry = data.find(e => {
+      const t = new Date(e.time_start);
+      return t.getHours() === currentHour;
+    });
+
+    if (!entry) {
+      console.warn("⚠ Fant ikke pris for gjeldende time i sone:", sone);
       return null;
     }
 
-    const nokPerKWh = eurMWh * VALUTAKURS_EUR_TIL_NOK / 1000;
+    // API gir pris i NOK per kWh direkte
+    const nokPerKWh = entry.NOK_per_kWh;
+
     console.log(`Sone ${sone}: ${nokPerKWh} NOK/kWh`);
     return nokPerKWh;
 
   } catch (error) {
-    console.error("🚨 Feil ved henting av norsk spotpris:", error);
+    console.error("🚨 Feil ved henting av spotpris:", error);
     return null;
   }
 }
