@@ -83,7 +83,7 @@ async function visTettsted(map) {
     return;
   }
 
-  const entry = steder.find(e => normaliser(e.tettsted) === søk);
+  const entry = await hentStedFraSSR(søk);
 
   if (!entry) {
     settStatus(`Fant ikke tettstedet "${input}".`, false);
@@ -118,7 +118,7 @@ function visPåKart(map, entry) {
   });
 
   // Legg til markør
-  L.marker([entry.lat_decimal, entry.lon_decimal])
+  L.marker([entry.lat, entry.lon])
     .addTo(map)
     .bindPopup(`
       <strong>${entry.tettsted}</strong><br>
@@ -188,6 +188,11 @@ function oppdaterFelter(entry, pris) {
   settTekst("kSlagordDisplay", entry?.k_slagord);
   settTekst("fSlagordDisplay", entry?.f_slagord);
   settTekst("statusDisplay", entry?.status);
+  settTekst("tettstedDisplay", entry.navn);
+  settTekst("fylkeDisplay", entry.fylke);
+  settTekst("kNrDisplay", entry.kommune);
+  settTekst("soneDisplay", entry.navnetype);
+
 
   settTekst(
     "prisDisplay",
@@ -195,4 +200,37 @@ function oppdaterFelter(entry, pris) {
       ? "Pris ikke tilgjengelig"
       : `${(pris * 100).toFixed(2)} øre/kWh`
   );
+}
+
+async function hentStedFraSSR(sok) {
+  const url = `https://ws.geonorge.no/stedsnavn/v1/navn?sok=${encodeURIComponent(sok)}&treffPerSide=1`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.warn("SSR svarte ikke OK:", response.status);
+      return null;
+    }
+
+    const data = await response.json();
+    if (!data.navn || data.navn.length === 0) {
+      console.warn("Ingen treff i SSR for:", sok);
+      return null;
+    }
+
+    const n = data.navn[0];
+
+    return {
+      navn: n.skrivemåte,
+      kommune: n.kommuner?.[0]?.kommunenavn || "",
+      fylke: n.fylker?.[0]?.fylkesnavn || "",
+      lat: n.representasjonspunkt?.nord,
+      lon: n.representasjonspunkt?.øst,
+      navnetype: n.navnetype
+    };
+
+  } catch (err) {
+    console.error("Feil ved henting fra SSR:", err);
+    return null;
+  }
 }
