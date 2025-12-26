@@ -41,7 +41,7 @@ function normaliserTettstedNavn(str) {
   return str.trim().toLowerCase();
 }
 
-/ === HOVEDFUNKSJON – vis info om tettsted ===
+// === HOVEDFUNKSJON – vis info om tettsted ===
 async function visTettsted() {
   console.log("✅ visTettsted() ble kalt");
   const input = document.getElementById('sokInput').value;
@@ -67,7 +67,16 @@ async function visTettsted() {
 
   console.log("✅ Fant entry:", entry);
 
+  const pris = await hentSpotpris(entry.sone);
 
+  if (pris == null) {
+    settStatus(`Fant data for ${entry.tettsted}, men ingen strømpris for sone ${entry.sone}.`, false);
+  } else {
+    settStatus(`Fant data for ${entry.tettsted} (sone ${entry.sone}).`, true);
+  }
+
+  oppdaterFelter(entry, pris);
+}
 
 // === HENT SPOTPRIS FRA hvakosterstrommen.no ===
 async function hentSpotpris(sone) {
