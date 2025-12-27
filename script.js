@@ -73,35 +73,24 @@ function utm32ToLatLon(northing, easting) {
 // Data: tettsteder + sonekart
 // --------------------------
 async function lastTettsteder() {
-  try{
-    const resp = await fetch("tettsteder_3.json");
-    if (!resp.ok) throw new Error("Klarte ikke laste tettsteder_3.json");
-    const data = await resp.json();
-
-    if (!Array.isArray(data)) {
-      throw new Error("tettsteder_3.json har feil format");
-    }
-  
-    steder = data;
-
-    // bygg kommune -> sone-oppslag
-    kommuneTilSone = {};
-    for (const e of data) {
-      if (e.k_nr && e.sone) {
-        kommuneTilSone[e.k_nr] = e.sone;
-      }
-    }  
     try {
-      console.log("Lastet tettsteder:", steder.length);
-    }catch (err) {
-      console.error("Feil ved lasting av tettsteder:", err);
-      settStatus("Klarte ikke laste lokal tettstedsliste.", false);
+        const resp = await fetch("tettsteder_3.json");
+        if (!resp.ok) throw new Error("Klarte ikke laste tettsteder_3.json");
+        const data = await resp.json();
+
+        if (!Array.isArray(data)) {
+            throw new Error("tettsteder_3.json har feil format");
+        }
+
+        steder = data;
+
+        // bygg kommune -> sone-oppslag
+        kommuneTilSone = {};
+        // ... eventuelt mer logikk her
+    } catch (error) {
+        console.error("Feil ved lasting av tettsteder:", error);
     }
-  } catch (err) {
-    console.error("Feil ved lasting av tettsteder:", err);
-    settStatus("Klarte ikke laste lokal tettstedsliste.", false);
-  }
-}
+} // ← denne avslutter hele funksjonen
 
 // --------------------------
 // Strømpris (tilpass API ved behov)
