@@ -1,3 +1,6 @@
+
+import { hentNowcast } from "./nowcast.js";
+
 // === GLOBALT DATASETT ===
 let steder = [];              // fylles når tettsteder_3.json lastes
 let kommuneTilSone = {};      // k_nr -> sone (bygges fra steder)
@@ -374,17 +377,23 @@ function oppdaterFelter(entry, pris) {
   settTekst("kNrDisplay", entry?.k_nr);
   settTekst("fylkeDisplay", entry?.fylke);
   settTekst("soneDisplay", entry?.sone);
-  settTekst("antallDisplay", entry?.antall);
-  settTekst("arealDisplay", entry?.areal);
-  settTekst("sysselsatteDisplay", entry?.sysselsatte);
-  settTekst("tilskuddDisplay", entry?.tilskudd);
-  settTekst("sprakDisplay", entry?.språk);
-  settTekst("kSlagordDisplay", entry?.k_slagord);
-  settTekst("fSlagordDisplay", entry?.f_slagord);
 
   if (pris == null) {
     settTekst("prisDisplay", "Pris ikke tilgjengelig");
   } else {
     settTekst("prisDisplay", `${(pris * 100).toFixed(2)} øre/kWh`);
   }
-}
+
+function visSted(data) {
+  const lat = data.lat;
+  const lon = data.lon;
+
+  // Oppdater UI
+  document.getElementById("tettstedDisplay").textContent = data.navn;
+  document.getElementById("NkrDisplay").textContent = data.kommunenummer;
+  document.getElementById("fylkeDisplay").textContent = data.fylke;
+  document.getElementById("soneDisplay").textContent = data.sone;
+
+  // 🔥 Hent værmelding
+  hentNowcast(lat, lon);
+}}
