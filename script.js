@@ -61,7 +61,6 @@ function oppdaterFelter(entry, pris) {
     }
   }
 
-
 // UTM32 → WGS84
 function utm32ToLatLon(northing, easting) {
   const utm32 = "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs";
@@ -74,7 +73,7 @@ function utm32ToLatLon(northing, easting) {
 // Data: tettsteder + sonekart
 // --------------------------
 async function lastTettsteder() {
-  try {
+  try{
     const resp = await fetch("tettsteder_3.json");
     if (!resp.ok) throw new Error("Klarte ikke laste tettsteder_3.json");
     const data = await resp.json();
@@ -82,7 +81,7 @@ async function lastTettsteder() {
     if (!Array.isArray(data)) {
       throw new Error("tettsteder_3.json har feil format");
     }
-
+  
     steder = data;
 
     // bygg kommune -> sone-oppslag
@@ -91,10 +90,15 @@ async function lastTettsteder() {
       if (e.k_nr && e.sone) {
         kommuneTilSone[e.k_nr] = e.sone;
       }
-    
+    }
 
-    console.log("Lastet tettsteder:", steder.length);
-   catch (err) {
+    try {
+      console.log("Lastet tettsteder:", steder.length);
+    } catch (err) {
+      console.error("Feil ved lasting av tettsteder:", err);
+      settStatus("Klarte ikke laste lokal tettstedsliste.", false);
+    }
+  } catch (err) {
     console.error("Feil ved lasting av tettsteder:", err);
     settStatus("Klarte ikke laste lokal tettstedsliste.", false);
   }
@@ -363,7 +367,6 @@ async function visTettsted(map) {
 // Init
 // --------------------------
 document.addEventListener("DOMContentLoaded", async () => {
-  // Init kart
   map = L.map("map").setView([62.566, 7.0], 7);
 
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -386,7 +389,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   visInfoBtn.addEventListener("click", () => visTettsted(map));
   sokInput.addEventListener("keyup", e => {
     if (e.key === "Enter") visTettsted(map);
-  });
+}); 
 
   settStatus("Skriv inn et tettsted for å starte.", true);
-});
+})};
