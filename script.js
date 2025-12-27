@@ -38,12 +38,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
       settStatus("Klar. Søk etter et tettsted eller stedsnavn.", true);
 
-      // Koble søk
-      visInfoBtn.addEventListener("click", () => visTettsted(map));
-      sokInput.addEventListener("keyup", e => {
-        if (e.key === "Enter") visTettsted(map);
-      });
-    })
+     // Koble søk til SSR-funksjonen
+visInfoBtn.addEventListener("click", async () => {
+    const query = sokInput.value.trim();
+    if (!query) return;
+
+    const result = await searchPlace(query);
+    if (!result) {
+        showStatus("Fant ingen treff.");
+        return;
+    }
+
+    showStatus(`Fant ${result.name} i ${result.kommune}, ${result.fylke}`);
+
+    // Hent vær
+    fetchWeather(result.lat, result.lon);
+
+    // Flytt kartet hvis du ønsker det
+    map.setView([result.lat, result.lon], 12);
+});
+
+sokInput.addEventListener("keyup", async e => {
+    if (e.key === "Enter") {
+        visInfoBtn.click(); // gjør det samme som knappen
+    }
+});
     .catch(err => {
       console.error("Feil ved lasting av tettsteder:", err);
       settStatus("Kunne ikke laste lokal tettstedsfil.", false);
@@ -114,9 +133,10 @@ async function visTettsted(map) {
         lat: entry.lat_decimal,
         lon: entry.lon_decimal,
         navn: entry.tettsted,
-        fylke: entry.fylke,
-        k_slagord: entry.k_slagord
       });
+      if (typeof entry.lat_decimal === "number" && typeof entry.lon_decimal === "number") {
+  hentNowcast(entry.lat_decimal, entry.lon_decimal);
+}
       return;
     }
 
@@ -139,7 +159,9 @@ async function visTettsted(map) {
       fylke: entry.fylke,
       k_slagord: entry.k_slagord
     });
-
+if (typeof entry.lat_decimal === "number" && typeof entry.lon_decimal === "number") {
+  hentNowcast(entry.lat_decimal, entry.lon_decimal);
+}
     return;
   }
 
@@ -214,26 +236,20 @@ async function visTettsted(map) {
     k_nr: ssr.k_nr || "",
     fylke: ssr.fylke || "",
     sone: sone || "–",
-    antall: "",
-    areal: "",
-    sysselsatte: "",
-    tilskudd: "",
-    språk: "",
-    k_slagord: "",
-    f_slagord: ""
+//    antall: "",
+//    areal: "",
+//    sysselsatte: "",
+//    tilskudd: "",
+//    språk: "",
+//    k_slagord: "",
+//    f_slagord: ""
   };
 
   oppdaterFelter(entryFraSSR, pris);
 
-  if (typeof lat === "number" && typeof lon === "number") {
-    visPåKart(map, {
-      lat,
-      lon,
-      navn: ssr.navn,
-      fylke: ssr.fylke,
-      k_slagord: ""
-    });
-  }
+if (typeof lat === "number" && typeof lon === "number") {
+  visPåKart(map, { lat, lon, navn: ssr.navn, fylke: ssr.fylke, k_slagord: "" });
+  hentNowcast(lat, lon);
 }
 
 
@@ -384,16 +400,49 @@ function oppdaterFelter(entry, pris) {
     settTekst("prisDisplay", `${(pris * 100).toFixed(2)} øre/kWh`);
   }
 
-function visSted(data) {
-  const lat = data.lat;
-  const lon = data.lon;
 
-  // Oppdater UI
-  document.getElementById("tettstedDisplay").textContent = data.navn;
-  document.getElementById("NkrDisplay").textContent = data.kommunenummer;
-  document.getElementById("fylkeDisplay").textContent = data.fylke;
-  document.getElementById("soneDisplay").textContent = data.sone;
 
-  // 🔥 Hent værmelding
-  hentNowcast(lat, lon);
-}}
+async function searchPlace(query) {
+    const url = `https://ws.geonorge.no/SKWS3Index/ssr/sok?navn=${encodeURIComponent(query)}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error("SSR API-feil");
+        }
+
+        const data = await response.json();
+
+        if (!data?.stedsnavn || data.stedsnavn.length === 0) {
+            return null; // Ingen treff
+        }
+
+        // Ta første treff
+        const place = data.stedsnavn[0];
+
+        // SSR gir UTM32-koordinater, vi må konvertere til lat/lon
+        const latLon = utm32ToLatLon(place.nord, place.øst);
+
+        return {
+            name: place.stedsnavn,
+            kommune: place.kommunenavn,
+            fylke: place.fylkesnavn,
+            lat: latLon.lat,
+            lon: latLon.lon
+        };
+
+    } catch (err) {
+        console.error("Feil ved søk:", err);
+        return null;
+    }
+}
+
+function utm32ToLatLon(northing, easting) {
+    const proj4 = window.proj4;
+
+    const utm32 = "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs";
+    const wgs84 = "+proj=longlat +datum=WGS84 +no_defs";
+
+    const [lon, lat] = proj4(utm32, wgs84, [easting, northing]);
+    return { lat, lon };
+}
