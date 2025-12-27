@@ -37,7 +37,7 @@ function oppdaterFelter(entry, pris) {
   const kNrEl = document.getElementById("kNrDisplay");
   const fylkeEl = document.getElementById("fylkeDisplay");
   const soneEl = document.getElementById("soneDisplay");
-
+}
   if (!entry) {
     if (tettstedEl) tettstedEl.textContent = "–";
     if (prisEl) prisEl.textContent = "–";
@@ -81,7 +81,7 @@ async function lastTettsteder() {
         if (!Array.isArray(data)) {
             throw new Error("tettsteder_3.json har feil format");
         }
-
+      
         steder = data;
 
         // bygg kommune -> sone-oppslag
@@ -380,4 +380,4 @@ document.addEventListener("DOMContentLoaded", async () => {
 }); 
 
   settStatus("Skriv inn et tettsted for å starte.", true);
-})};
+});
